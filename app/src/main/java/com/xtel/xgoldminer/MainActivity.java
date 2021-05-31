@@ -40,6 +40,22 @@ public class MainActivity extends AppCompatActivity {
                 .enablePendingPurchases()
                 .setListener((billingResult, list) -> {
                     //TODO: Hàm này sẽ trả về kết quả khi người dùng thực hiện mua hàng.
+                    /*
+        int SERVICE_TIMEOUT = -3;
+        int FEATURE_NOT_SUPPORTED = -2;
+        int SERVICE_DISCONNECTED = -1;
+        int OK = 0;
+        int USER_CANCELED = 1;
+        int SERVICE_UNAVAILABLE = 2;
+        int BILLING_UNAVAILABLE = 3;
+        int ITEM_UNAVAILABLE = 4;
+        int DEVELOPER_ERROR = 5;
+        int ERROR = 6;
+        int ITEM_ALREADY_OWNED = 7;
+        int ITEM_NOT_OWNED = 8;
+                     */
+                    Log.d(TAG, "onCreate: code: " + billingResult.getResponseCode());
+                    Log.d(TAG, "onCreate: massage: " + billingResult.getDebugMessage());
                 })
                 .build();
         //TODO: Connect ứng dụng của bạn với Google Billing
@@ -51,27 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                     Log.d(TAG, "onBillingSetupFinished: Connect OK");
-                    List<String> skuList = new ArrayList<>();
-                    skuList.add("99cent_buy_gold");
-                    skuList.add("4699cent_buy_gold");
-                    skuList.add("999cent_buy_gold");
-                    skuList.add("199cent_buy_gold");
-                    skuList.add("499cent_buy_gold");
-                    skuList.add("1999cent_buy_gold");
-                    SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
-                    params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
-                    billingClient.querySkuDetailsAsync(params.build(),
-                            new SkuDetailsResponseListener() {
-                                @Override
-                                public void onSkuDetailsResponse(BillingResult billingResult,
-                                                                 List<SkuDetails> skuDetailsList) {
-
-                                    Log.d(TAG, "onSkuDetailsResponse: response OK" + skuDetailsList);
-                                    if (skuDetailsList != null) {
-                                        skuDetails.addAll(skuDetailsList);
-                                    }
-                                }
-                            });
+                    responseSkudetail();
                 }
 
 
@@ -95,6 +91,28 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void responseSkudetail() {
+        List<String> skuList = new ArrayList<>();
+        skuList.add("99cent_buy_gold");
+        skuList.add("4699cent_buy_gold");
+        skuList.add("999cent_buy_gold");
+        skuList.add("199cent_buy_gold");
+        skuList.add("499cent_buy_gold");
+        skuList.add("1999cent_buy_gold");
+        SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
+        params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
+        billingClient.querySkuDetailsAsync(params.build(),
+                new SkuDetailsResponseListener() {
+                    @Override
+                    public void onSkuDetailsResponse(BillingResult billingResult,
+                                                     List<SkuDetails> skuDetailsList) {
+                        Log.d(TAG, "onSkuDetailsResponse: response OK" + skuDetailsList);
+                        if (skuDetailsList != null) {
+                            skuDetails.addAll(skuDetailsList);
+                        }
+                    }
+                });
+    }
 
 }
 
