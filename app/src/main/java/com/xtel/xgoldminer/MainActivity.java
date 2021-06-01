@@ -33,14 +33,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "onCreate: OK");
-
         button = (Button) findViewById(R.id.button);
         billingClient = BillingClient.newBuilder(this)
                 .enablePendingPurchases()
                 .setListener((billingResult, list) -> {
                     //TODO: Hàm này sẽ trả về kết quả khi người dùng thực hiện mua hàng.
                     /*
+                    Đây là 1 số mã code trả về khi thanh toán
         int SERVICE_TIMEOUT = -3;
         int FEATURE_NOT_SUPPORTED = -2;
         int SERVICE_DISCONNECTED = -1;
@@ -64,13 +63,11 @@ public class MainActivity extends AppCompatActivity {
             public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
                 //TODO: Sau khi connect thành công, thử lấy thông tin các sản phẩm
 
-
+                //Nếu response thành công thì bắt đầu thực hiện lấy về sản phẩm
                 if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                     Log.d(TAG, "onBillingSetupFinished: Connect OK");
                     responseSkudetail();
                 }
-
-
             }
 
             @Override
@@ -84,14 +81,15 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(v -> {
             BillingFlowParams billingFlowParam = BillingFlowParams
                     .newBuilder()
-                    .setSkuDetails(skuDetails.get(0))
+                    .setSkuDetails(skuDetails.get(0))//phần này thanh bằng 1 đối tượng cần mua, ở đây đang lấy phần tử đầu tiên trong list
                     .build();
-
+            //Mở thanh toán purchase
             billingClient.launchBillingFlow(this, billingFlowParam);
         });
     }
 
     private void responseSkudetail() {
+        //List id sản phẩm trên gg console
         List<String> skuList = new ArrayList<>();
         skuList.add("99cent_buy_gold");
         skuList.add("4699cent_buy_gold");
@@ -108,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                                                      List<SkuDetails> skuDetailsList) {
                         Log.d(TAG, "onSkuDetailsResponse: response OK" + skuDetailsList);
                         if (skuDetailsList != null) {
-                            skuDetails.addAll(skuDetailsList);
+                            skuDetails.addAll(skuDetailsList);//lấy list ra để sử dụng
                         }
                     }
                 });
